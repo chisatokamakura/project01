@@ -1,8 +1,8 @@
 # Markdown to HTML compiler
 
-![](https://github.com/chisatokamakura/project01/blob/master/.github/workflows/doctests.yaml)&nbsp;
-![](https://github.com/chisatokamakura/project01/blob/master/.github/workflows/flake8.yaml)&nbsp;
-![](https://github.com/chisatokamakura/project01/blob/master/.github/workflows/command_line.yaml)&nbsp;
+![](https://github.com/chisatokamakura/project01/actions/workflows/doctests.yaml/badge.svg)&nbsp;
+![](https://github.com/chisatokamakura/project01/actions/workflows/flake8.yaml/badge.svg)&nbsp;
+![](https://github.com/chisatokamakura/project01/actions/workflows/command_line.yaml/badge.svg)&nbsp;
 
 A simple project for converting markdown files to HTML.
 
