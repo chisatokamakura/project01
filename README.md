@@ -8,14 +8,14 @@ A simple project for converting markdown files to HTML.
 
 Basic usage:
 ```
-$ markdown-compiler example/README.md # run this line in terminal, then get screenshot 
+$ markdown-compiler example/README.md 
 ```
 
-<img src='examples/example.png' width=300px> # full screen screenshot, add file
+<img src='Screenshot 2026-03-03 at 1.36.35 AM.png' width=300px> # full screen screenshot, add file
 
 Fancy CSS formatting can be included with the flag `--add_css`: #html
 ```
 $ markdown-compiler example/README.md --add_css # run this line in terminal, get screenshot
 ```
 
-<img src='examples/example-css.png' width=300px>
+<img src='Screenshot 2026-03-03 at 1.36.35 AM.png' width=300px>
