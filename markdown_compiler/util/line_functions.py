@@ -2,6 +2,7 @@
 Each of the functions in this file takes a single line of input and transforms the line in some way.
 '''
 
+
 def compile_headers(line):
     '''
     Convert markdown headers into <h1>,<h2>,etc tags.
@@ -26,6 +27,18 @@ def compile_headers(line):
     >>> compile_headers('      # this is not a header')
     '      # this is not a header'
     '''
+    if line.startswith('# '):
+        return '<h1>' + line[1:] + '</h1>'
+    if line.startswith('## '):
+        return '<h2>' + line[2:] + '</h2>'
+    if line.startswith('### '):
+        return '<h3>' + line[3:] + '</h3>'
+    if line.startswith('#### '):
+        return '<h4>' + line[4:] + '</h4>'
+    if line.startswith('##### '):
+        return '<h5>' + line[5:] + '</h5>'
+    if line.startswith('###### '):
+        return '<h6>' + line[6:] + '</h6>'
     return line
 
 
@@ -50,7 +63,28 @@ def compile_italic_star(line):
     >>> compile_italic_star('*')
     '*'
     '''
-    return line
+    if line.count('*') < 2:
+        return line
+
+    accumulator = ''
+    has_opened = False   # have we seen a * yet?
+
+    for char in line:
+        # print is useful to debug to help understand what the code is doing
+        # print(char)
+        # common mistake is to put '' when not needed/not put when needed
+        if char == '*':
+            if not has_opened:
+                accumulator += '<i>'
+                has_opened = True
+            else:
+                accumulator += '</i>'
+                has_opened = False
+            # clever way:
+            # has_opened = not has_opened
+        else:
+            accumulator += char   # only add character if it is not equal to *
+    return accumulator
 
 
 def compile_italic_underscore(line):
@@ -71,7 +105,29 @@ def compile_italic_underscore(line):
     >>> compile_italic_underscore('_')
     '_'
     '''
-    return line
+    if line.count('_') < 2:
+        return line
+
+    accumulator = ''
+    has_opened = False   # have we seen a * yet?
+
+    for char in line:
+        # print is useful to debug to help understand what the code is doing
+        # print(char)
+        # common mistake is to put '' when not needed/not put when needed
+        if char == '_':
+            if not has_opened:
+                accumulator += '<i>'
+                has_opened = True
+            else:
+                accumulator += '</i>'
+                has_opened = False
+            # clever way:
+            # has_opened = not has_opened
+        else:
+            accumulator += char
+            # only add character if it is not equal to *
+    return accumulator
 
 
 def compile_strikethrough(line):
@@ -94,7 +150,26 @@ def compile_strikethrough(line):
     >>> compile_strikethrough('~~')
     '~~'
     '''
-    return line
+    if line.count('~~') < 2:
+        return line
+
+    accumulator = ''
+    has_opened = False
+    i = 0
+
+    while i < len(line):
+        if line[i:i + 2] == '~~':
+            if not has_opened:
+                accumulator += '<ins>'
+                has_opened = True
+            else:
+                accumulator += '</ins>'
+                has_opened = False
+            i += 2
+        else:
+            accumulator += line[i]
+            i += 1
+    return accumulator
 
 
 def compile_bold_stars(line):
@@ -115,7 +190,26 @@ def compile_bold_stars(line):
     >>> compile_bold_stars('**')
     '**'
     '''
-    return line
+    if line.count('**') < 2:
+        return line
+
+    accumulator = ''
+    has_opened = False
+    i = 0
+
+    while i < len(line):
+        if line[i:i + 2] == '**':
+            if not has_opened:
+                accumulator += '<b>'
+                has_opened = True
+            else:
+                accumulator += '</b>'
+                has_opened = False
+            i += 2
+        else:
+            accumulator += line[i]
+            i += 1
+    return accumulator
 
 
 def compile_bold_underscore(line):
@@ -136,7 +230,26 @@ def compile_bold_underscore(line):
     >>> compile_bold_underscore('__')
     '__'
     '''
-    return line
+    if line.count('__') < 2:
+        return line
+
+    accumulator = ''
+    has_opened = False
+    i = 0
+
+    while i < len(line):
+        if line[i:i + 2] == '__':
+            if not has_opened:
+                accumulator += '<b>'
+                has_opened = True
+            else:
+                accumulator += '</b>'
+                has_opened = False
+            i += 2
+        else:
+            accumulator += line[i]
+            i += 1
+    return accumulator
 
 
 def compile_code_inline(line):
@@ -166,7 +279,28 @@ def compile_code_inline(line):
     >>> compile_code_inline('```python3')
     '```python3'
     '''
-    return line
+    if line.count('`') < 2 or line.count('`') % 2 != 0:
+        return line
+
+    accumulator = ''
+    has_opened = False
+
+    for char in line:
+        if char == '`':
+            if not has_opened:
+                accumulator += '<code>'
+                has_opened = True
+            else:
+                accumulator += '</code>'
+                has_opened = False
+        else:
+            if has_opened and char == "<":
+                accumulator += '&lt;'
+            elif has_opened and char == ">":
+                accumulator += '&gt;'
+            else:
+                accumulator += char
+    return accumulator
 
 
 def compile_links(line):
@@ -186,7 +320,30 @@ def compile_links(line):
     >>> compile_links('this is wrong: [course webpage](https://github.com/mikeizbicki/cmc-csci040')
     'this is wrong: [course webpage](https://github.com/mikeizbicki/cmc-csci040'
     '''
-    return line
+    start_text = line.find("[")
+    if start_text == -1:
+        return line
+
+    end_text = line.find("]", start_text + 1)
+    if end_text == -1:
+        return line
+
+    # check to see if ( immediately follows or if there is any char after ]
+    if end_text + 1 >= len(line) or line[end_text + 1] != "(":
+        return line
+
+    end_link = line.find(')', end_text + 2)
+    if end_link == -1:
+        return line
+
+    text = line[start_text + 1:end_text]
+    link = line[end_text + 2:end_link]
+
+    return (
+        line[:start_text] + f'<a href="{link}">{text}</a>' + line[end_link + 1:]
+    )
+
+# need the before/after of the markdown link as well
 
 
 def compile_images(line):
@@ -205,4 +362,28 @@ def compile_images(line):
     >>> compile_images('This is an image of Mike Izbicki: ![Mike Izbicki](https://avatars1.githubusercontent.com/u/1052630?v=2&s=460)')
     'This is an image of Mike Izbicki: <img src="https://avatars1.githubusercontent.com/u/1052630?v=2&s=460" alt="Mike Izbicki" />'
     '''
-    return line
+    start_text = line.find("!")
+    if start_text == -1:
+        return line
+
+    if start_text + 1 >= len(line) or line[start_text + 1] != "[":
+        return line
+
+    end_text = line.find("]", start_text + 2)
+    if end_text == -1:
+        return line
+
+    # check to see if ( immediately follows or if there is any char after ]
+    if end_text + 1 >= len(line) or line[end_text + 1] != "(":
+        return line
+
+    end_link = line.find(')', end_text + 2)
+    if end_link == -1:
+        return line
+
+    text = line[start_text + 2:end_text]
+    link = line[end_text + 2:end_link]
+
+    return (
+        line[:start_text] + f'<img src="{link}" alt="{text}" />' + line[end_link + 1:]
+    )
