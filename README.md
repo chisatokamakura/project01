@@ -11,11 +11,11 @@ Basic usage:
 $ markdown-compiler example/README.md 
 ```
 
-<img src='Screenshot 2026-03-03 at 1.36.35 AM.png' width=300px> 
+<img src='screenshot_no_css.png' width=300px> 
 
 Fancy CSS formatting can be included with the flag `--add_css`: 
 ```
-$ markdown-compiler example/README.md --add_css # run this line in terminal, get screenshot
+$ markdown-compiler example/README.md --add_css 
 ```
 
-<img src='Screenshot 2026-03-03 at 1.36.35 AM.png' width=300px>
+<img src='screenshot_no_css.png' width=300px>
